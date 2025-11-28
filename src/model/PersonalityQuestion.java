@@ -1,66 +1,55 @@
 package model;
 
-import core.FileHandler;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import core.InvalidInputException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class PlayerHistory {
-    private String playerName;
-    private String birthdate;
-    private List<Personality> unlockedPersonalities;
-    private int completedGames;
-    private LocalDateTime lastPlayed;
+public class PersonalityQuestion extends Question {
+    private String[] options;
+    private Map<String, Integer> traitWeights;
+    private int selectedAnswer;
 
-    public PlayerHistory(String playerName, String birthdate) {
-        this.playerName = playerName;
-        this.birthdate = birthdate;
-        this.unlockedPersonalities = new ArrayList<>();
-        this.completedGames = 0;
-        this.lastPlayed = LocalDateTime.now();
+    public PersonalityQuestion(String questionText, int questionNumber, String[] options) {
+        super(questionText, questionNumber);
+        this.options = options;
+        this.traitWeights = new HashMap<>();
+        this.selectedAnswer = -1;
     }
 
-    public void addPersonality(Personality personality) {
-        unlockedPersonalities.add(personality);
-        completedGames++;
-        lastPlayed = LocalDateTime.now();
-        System.out.println("\n⋆⭒˚.⋆ Personality added to your collection! ⋆⭒˚.⋆");
-    }
-
-    public void displayHistory() {
-        System.out.println("\n✦•···························•✦•···························•✦");
+    @Override
+    public void displayQuestion() {
         System.out.println("\n╔════════════════════════════════════════════════════════════╗");
-        System.out.println("║                 YOUR PERSONALITY COLLECTION                ║");
+        System.out.println("║ Question " + questionNumber + "/10                                              ║");
         System.out.println("╚════════════════════════════════════════════════════════════╝");
-        System.out.println("| Player: " + playerName);
-        System.out.println("| Cosmic Alignment: " + birthdate);
-        System.out.println("| Games Completed: " + completedGames);
-        System.out.println("| Last Played: " + lastPlayed.toLocalDate());
-        System.out.println("\n| Unlocked Personalities:");
+        System.out.println(questionText);
+        System.out.println();
         
-        if (unlockedPersonalities.isEmpty()) {
-            System.out.println("  No personalities unlocked yet. Start playing!");
-        } else {
-            for (int i = 0; i < unlockedPersonalities.size(); i++) {
-                System.out.println("  " + (i + 1) + ". " + unlockedPersonalities.get(i));
-            }
+        for (int i = 0; i < options.length; i++) {
+            System.out.println("  [" + (i + 1) + "] " + options[i]);
         }
-        System.out.println("════════════════════════════════════════════════════════════");
+        System.out.println();
     }
 
-    public void deleteHistory() {
-        unlockedPersonalities.clear();
-        completedGames = 0;
-        System.out.println("\n🗑♲ History cleared successfully!");
+    @Override
+    public String processAnswer(String answer) {
+        try {
+            int choice = Integer.parseInt(answer.trim());
+            if (choice >= 1 && choice <= options.length) {
+                selectedAnswer = choice;
+                return calculateTrait(choice);
+            } else {
+                throw new InvalidInputException("Please enter a number between 1 and " + options.length);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidInputException("Invalid input. Please enter a number.");
+        }
     }
 
-    public void saveToFile() {
-        FileHandler.saveHistory(this);
+    public String calculateTrait(int choice) {
+        // Map choices to personality traits
+        String[] traits = {"mystic", "cosmic", "shadow", "radiant", "ethereal", "luminary", "serenity", "phoenix", "wild", "wisdom"};
+        return traits[choice % traits.length];
     }
 
-    public String getPlayerName() { return playerName; }
-    public String getBirthdate() { return birthdate; }
-    public String getUserId() { return playerName.toLowerCase() + "_" + birthdate.replace("/", ""); }
-    public List<Personality> getUnlockedPersonalities() { return unlockedPersonalities; }
-    public int getCompletedGames() { return completedGames; }
+    public String[] getOptions() { return options; }
 }
