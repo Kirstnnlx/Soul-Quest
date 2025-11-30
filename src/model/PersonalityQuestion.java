@@ -45,16 +45,11 @@ public class PersonalityQuestion extends Question {
     }
 
     public String calculateTrait(int choice) {
-        // Map each question and choice combination to personality traits
-        // This ensures all 10 personalities are accessible
+
         String[] traits = {"mystic", "cosmic", "shadow", "radiant", "ethereal", 
                            "luminary", "serenity", "phoenix", "wild", "wisdom"};
         
-        // Use question number and choice to distribute traits evenly
-        // Formula: (questionNumber - 1) * 4 + (choice - 1) gives unique values 0-39
-        // Then mod 10 to map to our 10 traits
         int traitIndex = ((questionNumber - 1) * 4 + (choice - 1)) % 10;
-        
         return traits[traitIndex];
     }
 
