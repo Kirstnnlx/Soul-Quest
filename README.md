@@ -155,7 +155,7 @@ All orchestrated by the `GameEngine` for a seamless self-discovery journey âš¡âœ
 </table>
 
 <div align="center">
-  <img src="assets/Running.gif" alt="Running" width="450">
+  <img src="assets/DevPix/SoulForm.gif" alt="Soul Form" width="600">
 </div>
 
 
